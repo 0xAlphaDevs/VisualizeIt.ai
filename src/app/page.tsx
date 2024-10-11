@@ -16,7 +16,7 @@ export default function Home() {
             <span className="font-bold text-blue-500">.ai</span>
           </p>
           <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-            <Link href="/">
+            <Link href="/dashboard">
               <Button className="font-bold text-xl">Launch App</Button>
             </Link>
           </div>

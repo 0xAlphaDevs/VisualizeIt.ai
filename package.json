@@ -9,8 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@livepeer/ai": "^0.4.0",
+    "@radix-ui/colors": "^3.0.0",
+    "@radix-ui/react-form": "^0.1.0",
     "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-toggle-group": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.451.0",
