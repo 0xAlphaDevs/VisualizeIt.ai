@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -14,19 +15,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Play } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { FileText, Play, Eraser, Undo, Redo } from "lucide-react";
 
 export default function VideoGenerator() {
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [script, setScript] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-    }
-  };
+  const [brushColor, setBrushColor] = useState("#000000");
+  const [brushSize, setBrushSize] = useState(5);
+  const canvasRef = useRef<ReactSketchCanvasRef>(null);
 
   const handleScriptChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -34,13 +31,21 @@ export default function VideoGenerator() {
     setScript(event.target.value);
   };
 
-  const handleSubmit = (inputType: "image" | "script") => {
+  const handleSubmit = async (inputType: "scribble" | "script") => {
     setIsGenerating(true);
-    // Here you would implement the AI generation logic
-    console.log(
-      `Generating video from ${inputType}:`,
-      inputType === "image" ? imageFile : script
-    );
+    if (inputType === "scribble") {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        try {
+          const imageData = await canvas.exportImage("png");
+          console.log("Generating video from scribble:", imageData);
+        } catch (error) {
+          console.error("Error exporting canvas image:", error);
+        }
+      }
+    } else {
+      console.log("Generating video from script:", script);
+    }
     setTimeout(() => setIsGenerating(false), 2000); // Simulating API call
   };
 
@@ -54,37 +59,75 @@ export default function VideoGenerator() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="image" className="w-full">
+          <Tabs defaultValue="scribble" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="image">Image Input</TabsTrigger>
+              <TabsTrigger value="scribble">Scribble Input</TabsTrigger>
               <TabsTrigger value="script">Script Input</TabsTrigger>
             </TabsList>
-            <TabsContent value="image">
+            <TabsContent value="scribble">
               <div className="space-y-4">
-                <Label htmlFor="image-upload">
-                  Upload an image to generate a scene
-                </Label>
-                <div className="flex items-center space-x-4">
-                  <Input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="flex-1"
+                <Label>Draw your scene</Label>
+                <div className="border rounded-lg p-2">
+                  <ReactSketchCanvas
+                    ref={canvasRef}
+                    width="100%"
+                    height="300px"
+                    strokeWidth={brushSize}
+                    strokeColor={brushColor}
+                    canvasColor="#ffffff"
+                    className="w-full h-auto border rounded cursor-crosshair touch-none"
                   />
+                </div>
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="brush-color">Color:</Label>
+                    <Input
+                      id="brush-color"
+                      type="color"
+                      value={brushColor}
+                      onChange={(e) => setBrushColor(e.target.value)}
+                      className="w-12 h-12 p-1"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="brush-size">Size:</Label>
+                    <Slider
+                      id="brush-size"
+                      min={1}
+                      max={20}
+                      value={[brushSize]}
+                      onValueChange={(value) => setBrushSize(value[0])}
+                      className="w-32"
+                    />
+                  </div>
                   <Button
-                    onClick={() => handleSubmit("image")}
-                    disabled={!imageFile || isGenerating}
+                    onClick={() => canvasRef.current?.undo()}
+                    variant="outline"
                   >
-                    {isGenerating ? "Generating..." : "Generate"}
-                    {!isGenerating && <Upload className="ml-2 h-4 w-4" />}
+                    <Undo className="mr-2 h-4 w-4" />
+                    Undo
+                  </Button>
+                  <Button
+                    onClick={() => canvasRef.current?.redo()}
+                    variant="outline"
+                  >
+                    <Redo className="mr-2 h-4 w-4" />
+                    Redo
+                  </Button>
+                  <Button
+                    onClick={() => canvasRef.current?.clearCanvas()}
+                    variant="outline"
+                  >
+                    <Eraser className="mr-2 h-4 w-4" />
+                    Clear
                   </Button>
                 </div>
-                {imageFile && (
-                  <p className="text-sm text-muted-foreground">
-                    Selected file: {imageFile.name}
-                  </p>
-                )}
+                <Button
+                  onClick={() => handleSubmit("scribble")}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? "Generating..." : "Generate from Scribble"}
+                </Button>
               </div>
             </TabsContent>
             <TabsContent value="script">
@@ -103,7 +146,7 @@ export default function VideoGenerator() {
                   onClick={() => handleSubmit("script")}
                   disabled={!script || isGenerating}
                 >
-                  {isGenerating ? "Generating..." : "Generate"}
+                  {isGenerating ? "Generating..." : "Generate from Script"}
                   {!isGenerating && <FileText className="ml-2 h-4 w-4" />}
                 </Button>
               </div>
