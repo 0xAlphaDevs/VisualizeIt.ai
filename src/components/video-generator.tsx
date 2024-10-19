@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useTransition } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -17,10 +17,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { FileText, Play, Eraser, Undo, Redo } from "lucide-react";
+import { testTextToImage } from "@/app/actions";
+import Image from "next/image";
 
 export default function VideoGenerator() {
   const [script, setScript] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [brushColor, setBrushColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
@@ -45,8 +49,15 @@ export default function VideoGenerator() {
       }
     } else {
       console.log("Generating video from script:", script);
+      // livepeer to generate image from prompt
+      startTransition(async () => {
+        const result = await testTextToImage(script);
+        if (result.success) {
+          setImages((prevImages) => [...result.images, ...prevImages]);
+        }
+      });
     }
-    setTimeout(() => setIsGenerating(false), 2000); // Simulating API call
+    // setTimeout(() => setIsGenerating(false), 2000); // Simulating API call
   };
 
   return (
@@ -144,20 +155,36 @@ export default function VideoGenerator() {
                 />
                 <Button
                   onClick={() => handleSubmit("script")}
-                  disabled={!script || isGenerating}
+                  disabled={!script || isPending}
                 >
-                  {isGenerating ? "Generating..." : "Generate from Script"}
-                  {!isGenerating && <FileText className="ml-2 h-4 w-4" />}
+                  {isPending ? "Generating..." : "Generate from Script"}
+                  {!isPending && <FileText className="ml-2 h-4 w-4" />}
                 </Button>
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
         <CardFooter>
-          <div className="w-full aspect-video bg-muted rounded-lg flex items-center justify-center">
-            <Play className="h-12 w-12 text-muted-foreground" />
-            <span className="sr-only">Generated video will appear here</span>
-          </div>
+          {/* <div className="w-full aspect-video bg-muted rounded-lg flex items-center justify-center"> */}
+          {/* <Play className="h-12 w-12 text-muted-foreground" />
+            <span className="sr-only">Generated video will appear here</span> */}
+          {/* </div> */}
+          {images.length > 0 && (
+            <div className="mt-8">
+              {/* <h2 className="mb-4 text-xl font-semibold">Generated Images</h2> */}
+              <div className="grid grid-cols-2 gap-4">
+                {images.map((src, index) => (
+                  <Image
+                    key={index}
+                    src={src}
+                    width={512}
+                    height={512}
+                    alt={`Generated Image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </CardFooter>
       </Card>
     </div>
