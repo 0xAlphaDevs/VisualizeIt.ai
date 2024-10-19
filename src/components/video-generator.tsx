@@ -51,10 +51,12 @@ export default function VideoGenerator() {
       console.log("Generating video from script:", script);
       // livepeer to generate image from prompt
       startTransition(async () => {
-        const result = await testTextToImage(script);
-        if (result.success) {
-          setImages((prevImages) => [...result.images, ...prevImages]);
-        }
+        await testTextToImage(script);
+        // const result = await testTextToImage(script);
+
+        // if (result.success) {
+        //   setImages((prevImages) => [...result.images, ...prevImages]);
+        // }
       });
     }
     // setTimeout(() => setIsGenerating(false), 2000); // Simulating API call

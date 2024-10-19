@@ -112,6 +112,7 @@ export async function testTextToImage(prompt: string) {
 
   const result = await livepeerAI.generate.imageToVideo({
     image: await openAsBlob(imagePath),
+    modelId: "stabilityai/stable-video-diffusion-img2vid-xt-1-1",
   });
 
   console.log("Image to video result:", result.videoResponse);

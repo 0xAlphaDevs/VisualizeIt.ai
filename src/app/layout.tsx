@@ -1,22 +1,11 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+"use client";
+
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/providers";
+import { Toaster } from "@/components/ui/toaster";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
-export const metadata: Metadata = {
-  title: "VisualizeIt.ai",
-  description: "A tool for creators and story tellers to create visuals for their narrration automatically using AI.",
-};
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -25,10 +14,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <head>
+        <link rel="icon" href="favicon.svg" />
+      </head>
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );
