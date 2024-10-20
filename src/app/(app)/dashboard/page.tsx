@@ -1,16 +1,16 @@
 
 import Link from 'next/link'
-import { ArrowRight, Pencil, Film } from 'lucide-react'
+import { ArrowRight, Pencil, Film, DollarSign } from 'lucide-react'
 
 export default function Dashboard() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto py-8">
       <h1 className="text-4xl font-bold mb-6">Welcome to VisualizeIt.ai</h1>
       <p className="text-xl mb-8">
         Create stunning visuals for your videos using AI-powered scene generation.
       </p>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-3 gap-8">
         <div className="bg-blue-50 p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 flex items-center">
             <Pencil className="mr-2" /> Step 1: Scribble
@@ -18,6 +18,7 @@ export default function Dashboard() {
           <p className="mb-4">
             Start by creating a simple scribble or sketch of your scene idea.
           </p>
+          <br />
           <Link
             href="/generate"
             className="inline-flex items-center text-blue-600 hover:text-blue-800"
@@ -40,7 +41,25 @@ export default function Dashboard() {
             Start Generating <ArrowRight className="ml-2" />
           </Link>
         </div>
+
+        <div className="bg-blue-50 p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4 flex items-center">
+            <DollarSign className="mr-2" /> Step 3: Monetize
+          </h2>
+          <p className="mb-4">
+            Earn creator revenue through Zora and Mint IP for your asset using Story
+          </p>
+          <Link
+            href="/generate"
+            className="inline-flex items-center text-blue-600 hover:text-blue-800"
+          >
+            Start Generating <ArrowRight className="ml-2" />
+          </Link>
+        </div>
+
       </div>
+
+
 
       <div className="mt-12 text-center">
         <Link
