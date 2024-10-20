@@ -12,7 +12,7 @@ import {
 import { motion } from "framer-motion"
 import { Wand2, VideoIcon, BrainCircuit } from "lucide-react"
 import { useState } from "react"
-
+``
 export default function Home() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
@@ -74,7 +74,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl">
-            Empower your creativity with AI-driven visual storytelling for creators and storytellers.
+            A tool for empowering your creativity with AI-driven visual storytelling.
           </p>
         </motion.div>
 
