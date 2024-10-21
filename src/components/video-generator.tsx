@@ -97,7 +97,6 @@ export default function VideoGenerator() {
     }
   };
 
-  // TODO: when saving the video to local storage turn the button text to Saving video to my assets and once it is successfully saved turn it to Video Saved to My Assets when nothing is there set the text to Save Video to my assets and users can save multiple objects to the local storage
   const handleSaveVideo = (videoUrl: string) => {
     console.log("Saving video to My Assets:", videoUrl);
     setIsSavingVideo(true);
@@ -109,9 +108,11 @@ export default function VideoGenerator() {
     } else {
       const videoData = {
         url: videoUrl,
+        nftMinted: false,
         mintedIP: false,
-        ipAssetLink: "",
         postedOnZora: false,
+        tokenId: "",
+        ipAssetLink: "",
         zoraLink: "",
       };
       // Save the new video to local storage
