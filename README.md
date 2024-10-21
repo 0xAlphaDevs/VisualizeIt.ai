@@ -6,7 +6,7 @@ A tool for empowering your creativity with AI-driven visual storytelling.
 
 - AI-Powered Scene Generation : Transform your ideas into stunning visuals with our advanced AI technology.
 - Narration to Visual Story : Convert your narrations into captivating visual stories automatically.
-- Smart Content Creation : Leverage AI to create engaging content for your audience effortlessly.
+-
 
 ## Table of Contents
 
