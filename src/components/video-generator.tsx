@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { FileText, Play, Eraser, Undo, Redo } from "lucide-react";
-import { imageToImage, textToImage } from "@/app/actions";
+import { imageToImage, textToImage, imageToVideo } from "@/app/actions";
 import Image from "next/image";
 
 export default function VideoGenerator() {
@@ -28,6 +28,7 @@ export default function VideoGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [isSavingVideo, setIsSavingVideo] = useState(false)
   const [brushColor, setBrushColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
@@ -83,17 +84,52 @@ export default function VideoGenerator() {
     }
   };
 
-  // TODO: implement video generation from image
-  const handleGenerateVideo = (imageUrl: string) => {
+  const handleGenerateVideo = async (imageUrl: string) => {
     setIsGeneratingVideo(true);
     console.log("Generating video from image:", imageUrl);
-    // livepeer to generate video from image
+    const response = await imageToVideo(imageUrl);
+    if (response.success) {
+      setVideos((prevVideos) => [...response.images, ...prevVideos]);
+      setIsGeneratingVideo(false);
+    } else {
+      console.error("Failed to generate video:", response.error);
+      setIsGeneratingVideo(false);
+    }
   };
 
-  // TODO: implement saving video to local storage
+  // TODO: when saving the video to local storage turn the button text to Saving video to my assets and once it is successfully saved turn it to Video Saved to My Assets when nothing is there set the text to Save Video to my assets and users can save multiple objects to the local storage
   const handleSaveVideo = (videoUrl: string) => {
     console.log("Saving video to My Assets:", videoUrl);
-    // livepeer to save video to user's assets
+    setIsSavingVideo(true);
+    const existingVideos = JSON.parse(localStorage.getItem("myAssets") || "[]");
+    const videoExists = existingVideos.some((video: { url: string; }) => video.url === videoUrl);
+    if (videoExists) {
+      // Display an alert if the video is already saved
+      alert("This video has already been saved to My Assets.");
+    } else {
+      const videoData = {
+        url: videoUrl,
+        mintedIP: false,
+        ipAssetLink: "",
+        postedOnZora: false,
+        zoraLink: "",
+      };
+      // Save the new video to local storage
+      existingVideos.push(videoData);
+      localStorage.setItem("myAssets", JSON.stringify(existingVideos));
+
+      // Display an alert to inform the user
+      alert("Video Saved to My Assets");
+      setIsSavingVideo(false);
+    }
+  };
+
+  const handlePlayPause = (videoElement: HTMLVideoElement) => {
+    if (videoElement.paused) {
+      videoElement.play();
+    } else {
+      videoElement.pause();
+    }
   };
 
   return (
@@ -216,11 +252,7 @@ export default function VideoGenerator() {
             </TabsContent>
           </Tabs>
         </CardContent>
-        <CardFooter>
-          {/* <div className="w-full aspect-video bg-muted rounded-lg flex items-center justify-center"> */}
-          {/* <Play className="h-12 w-12 text-muted-foreground" />
-            <span className="sr-only">Generated video will appear here</span> */}
-          {/* </div> */}
+        <CardFooter className="flex flex-col items-center">
           {images.length > 0 && (
             <div className="mt-8 flex flex-col items-center w-full">
               <h2 className="mb-4 text-xl font-semibold">Generated Images</h2>
@@ -253,17 +285,19 @@ export default function VideoGenerator() {
           {videos.length > 0 && (
             <div className="mt-8 flex flex-col items-center w-full">
               <h2 className="mb-4 text-xl font-semibold">Generated Videos</h2>
-
               {videos.map((src, index) => (
                 <div className="flex flex-col justify-center items-center">
-                  <Image
+                  <video
                     key={index}
-                    src={src}
                     width={512}
                     height={512}
-                    alt={`Generated Video ${index + 1}`}
-                    className="rounded-lg"
-                  />
+                    controls
+                    className="rounded-lg cursor-pointer"
+                    onClick={(e) => handlePlayPause(e.currentTarget)}
+                  >
+                    <source src={src} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                   <Button
                     variant="outline"
                     className="my-2 "
