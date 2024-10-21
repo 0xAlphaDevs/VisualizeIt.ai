@@ -1,9 +1,12 @@
-import React from 'react'
+import VideoGenerator from "@/components/video-generator";
+import React from "react";
 
 const Generate = () => {
   return (
-    <div>Generate</div>
-  )
-}
+    <div>
+      <VideoGenerator />
+    </div>
+  );
+};
 
-export default Generate
+export default Generate;

@@ -17,14 +17,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { FileText, Play, Eraser, Undo, Redo } from "lucide-react";
-import { testTextToImage } from "@/app/actions";
+import { imageToImage, textToImage } from "@/app/actions";
 import Image from "next/image";
 
 export default function VideoGenerator() {
   const [script, setScript] = useState("");
+  const [prompt, setPrompt] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [videos, setVideos] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [brushColor, setBrushColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
@@ -35,31 +38,62 @@ export default function VideoGenerator() {
     setScript(event.target.value);
   };
 
+  const handlePromptChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setPrompt(event.target.value);
+  };
+
   const handleSubmit = async (inputType: "scribble" | "script") => {
-    setIsGenerating(true);
+    // generate image from scribble
     if (inputType === "scribble") {
+      setIsGenerating(true);
       const canvas = canvasRef.current;
       if (canvas) {
         try {
           const imageData = await canvas.exportImage("png");
-          console.log("Generating video from scribble:", imageData);
+          const response = await imageToImage(prompt, imageData);
+          if (response.success) {
+            setImages((prevImages) => [...response.images, ...prevImages]);
+            setIsGenerating(false);
+          } else {
+            console.error(
+              "Failed to generate image from scribble:",
+              response.error
+            );
+            setIsGenerating(false);
+          }
         } catch (error) {
           console.error("Error exporting canvas image:", error);
+          setIsGenerating(false);
         }
       }
     } else {
-      console.log("Generating video from script:", script);
+      setIsPending(true);
+      console.log("Generating image from script:", script);
       // livepeer to generate image from prompt
-      startTransition(async () => {
-        await testTextToImage(script);
-        // const result = await testTextToImage(script);
-
-        // if (result.success) {
-        //   setImages((prevImages) => [...result.images, ...prevImages]);
-        // }
-      });
+      const response = await textToImage(script);
+      if (response.success) {
+        setImages((prevImages) => [...response.images, ...prevImages]);
+        setIsPending(false);
+      } else {
+        console.error("Failed to generate image from script:", response.error);
+        setIsPending(false);
+      }
     }
-    // setTimeout(() => setIsGenerating(false), 2000); // Simulating API call
+  };
+
+  // TODO: implement video generation from image
+  const handleGenerateVideo = (imageUrl: string) => {
+    setIsGeneratingVideo(true);
+    console.log("Generating video from image:", imageUrl);
+    // livepeer to generate video from image
+  };
+
+  // TODO: implement saving video to local storage
+  const handleSaveVideo = (videoUrl: string) => {
+    console.log("Saving video to My Assets:", videoUrl);
+    // livepeer to save video to user's assets
   };
 
   return (
@@ -135,12 +169,28 @@ export default function VideoGenerator() {
                     Clear
                   </Button>
                 </div>
-                <Button
-                  onClick={() => handleSubmit("scribble")}
-                  disabled={isGenerating}
-                >
-                  {isGenerating ? "Generating..." : "Generate from Scribble"}
-                </Button>
+                <div className="space-y-4">
+                  <Label htmlFor="prompt-input">
+                    Enter your prompt for your scribble
+                  </Label>
+                  <Textarea
+                    id="prompt-input"
+                    placeholder="Enter your prompt here..."
+                    value={prompt}
+                    onChange={handlePromptChange}
+                    rows={2}
+                  />
+                </div>
+                <div className="w-full flex justify-center">
+                  <Button
+                    onClick={() => handleSubmit("scribble")}
+                    disabled={isGenerating || !prompt}
+                  >
+                    {isGenerating
+                      ? "Generating..."
+                      : "Generate Image from Scribble"}
+                  </Button>
+                </div>
               </div>
             </TabsContent>
             <TabsContent value="script">
@@ -172,19 +222,57 @@ export default function VideoGenerator() {
             <span className="sr-only">Generated video will appear here</span> */}
           {/* </div> */}
           {images.length > 0 && (
-            <div className="mt-8">
-              {/* <h2 className="mb-4 text-xl font-semibold">Generated Images</h2> */}
-              <div className="grid grid-cols-2 gap-4">
-                {images.map((src, index) => (
+            <div className="mt-8 flex flex-col items-center w-full">
+              <h2 className="mb-4 text-xl font-semibold">Generated Images</h2>
+
+              {images.map((src, index) => (
+                <div className="flex flex-col justify-center items-center">
                   <Image
                     key={index}
                     src={src}
                     width={512}
                     height={512}
                     alt={`Generated Image ${index + 1}`}
+                    className="rounded-lg"
                   />
-                ))}
-              </div>
+                  <Button
+                    variant="outline"
+                    className="my-2 "
+                    onClick={() => handleGenerateVideo(src)}
+                    disabled={isGeneratingVideo}
+                  >
+                    {isGeneratingVideo
+                      ? "Generating Video..."
+                      : "Generate Video from Image"}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {videos.length > 0 && (
+            <div className="mt-8 flex flex-col items-center w-full">
+              <h2 className="mb-4 text-xl font-semibold">Generated Videos</h2>
+
+              {videos.map((src, index) => (
+                <div className="flex flex-col justify-center items-center">
+                  <Image
+                    key={index}
+                    src={src}
+                    width={512}
+                    height={512}
+                    alt={`Generated Video ${index + 1}`}
+                    className="rounded-lg"
+                  />
+                  <Button
+                    variant="outline"
+                    className="my-2 "
+                    onClick={() => handleSaveVideo(src)}
+                  >
+                    Save Video to My Assets
+                  </Button>
+                </div>
+              ))}
             </div>
           )}
         </CardFooter>
