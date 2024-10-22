@@ -111,11 +111,11 @@ export default function VideoGenerator() {
       const videoData = {
         url: videoUrl,
         nftMinted: false,
-        mintedIP: false,
-        postedOnZora: false,
+        nftIpfsHash: "",
+        nftHash: "",
+        registeredIp: false,
         tokenId: "",
-        ipAssetLink: "",
-        zoraLink: "",
+        storyExplorerLink: "",
       };
       // Save the new video to local storage
       existingVideos.push(videoData);
