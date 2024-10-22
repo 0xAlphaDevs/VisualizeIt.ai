@@ -28,7 +28,7 @@ export default function VideoGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const [isSavingVideo, setIsSavingVideo] = useState(false)
+  const [isSavingVideo, setIsSavingVideo] = useState(false);
   const [brushColor, setBrushColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
@@ -101,7 +101,9 @@ export default function VideoGenerator() {
     console.log("Saving video to My Assets:", videoUrl);
     setIsSavingVideo(true);
     const existingVideos = JSON.parse(localStorage.getItem("myAssets") || "[]");
-    const videoExists = existingVideos.some((video: { url: string; }) => video.url === videoUrl);
+    const videoExists = existingVideos.some(
+      (video: { url: string }) => video.url === videoUrl
+    );
     if (videoExists) {
       // Display an alert if the video is already saved
       alert("This video has already been saved to My Assets.");
@@ -257,14 +259,13 @@ export default function VideoGenerator() {
           {images.length > 0 && (
             <div className="mt-8 flex flex-col items-center w-full">
               <h2 className="mb-4 text-xl font-semibold">Generated Images</h2>
-
               {images.map((src, index) => (
                 <div className="flex flex-col justify-center items-center">
                   <Image
                     key={index}
                     src={src}
-                    width={512}
-                    height={512}
+                    width={1280}
+                    height={720}
                     alt={`Generated Image ${index + 1}`}
                     className="rounded-lg"
                   />

@@ -9,6 +9,8 @@ import { createWriteStream } from "fs";
 import { resolve } from "path";
 import { get } from "https";
 import { Image } from "@livepeer/ai/models/components";
+// @ts-ignore
+import { PinataSDK } from "pinata-web3";
 
 const livepeerAI = new Livepeer({
   httpBearer: process.env.LIVEPEER_API_KEY,
@@ -36,8 +38,8 @@ async function downloadImage(url: string) {
 export async function textToImage(prompt: string) {
   console.log("Generating image from script:", prompt);
   const modelId = "ByteDance/SDXL-Lightning";
-  const width = 512;
-  const height = 512;
+  const width = 1280;
+  const height = 720;
   const guidanceScale = 7.5;
   const negativePrompt = "";
   const safetyCheck = true;
@@ -136,4 +138,17 @@ export async function imageToVideo(imageUrl: string) {
       error: "Failed to generate images",
     };
   }
+}
+
+export async function uploadJSONToIPFS(json: any) {
+  const pinata = new PinataSDK({
+    pinataJwt: `${process.env.PINATA_JWT}`,
+    pinataGateway: `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}`,
+  });
+
+  // console.log("pinata jwt", process.env.PINATA_JWT);
+  console.log("Uploading JSON to IPFS...", json);
+  const upload = await pinata.upload.json(json);
+  console.log("JSON uploaded to IPFS:", upload);
+  return upload.IpfsHash;
 }
