@@ -8,7 +8,6 @@ import {
   useAccount,
   useWalletClient,
 } from "wagmi";
-import { zoraSepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StoryProvider } from "@story-protocol/react-sdk";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
@@ -41,7 +40,7 @@ const config = createConfig(
   getDefaultConfig({
     walletConnectProjectId:
       process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
-    chains: [zoraSepolia, iliad],
+    chains: [iliad],
     appName: "VisualizeIt.ai",
   })
 );

@@ -11,13 +11,21 @@ import {
   useNftClient,
   PIL_TYPE,
   IpMetadata,
+  RegisterIpResponse,
 } from "@story-protocol/react-sdk";
 import { ConnectKitButton } from "connectkit";
 import { useStory } from "@/lib/context/AppContext";
 import { useAccount } from "wagmi";
 import { uploadJSONToIPFS } from "@/app/actions";
 import { createHash } from "crypto";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -36,7 +44,7 @@ export default function MyAssets() {
   const { mintNFT, client } = useStory();
   const [assets, setAssets] = useState<AssetData[]>([]);
   const [form, setForm] = useState({ title: "", description: "" });
-
+  const [isLoading, setIsLoading] = useState(false);
 
   function refreshAssets() {
     const storedAssets = localStorage.getItem("myAssets");
@@ -63,7 +71,6 @@ export default function MyAssets() {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-
   const registerIP = async (
     tokenId: string,
     nftIpfsHash: string,
@@ -89,7 +96,10 @@ export default function MyAssets() {
       .update(JSON.stringify(ipMetadata))
       .digest("hex");
 
-    const response = await client?.ipAsset.register({
+    setIsLoading(true);
+
+    // @ts-ignore
+    const response: RegisterIpResponse = await client.ipAsset.register({
       nftContract: "0xd2a4a4Cb40357773b658BECc66A6c165FD9Fc485", // Story NFT contract address
       tokenId: tokenId, // your NFT token ID
       ipMetadata: {
@@ -101,17 +111,17 @@ export default function MyAssets() {
       txOptions: { waitForTransaction: true },
     });
 
-
     console.log(`Root IPA created at tx hash ${response?.txHash}`);
 
     const updatedAsset = {
       ...asset,
       registeredIp: true,
-      storyExplorerLink: `https://storyprotocol.io/explorer/${tokenId}`,
+      storyExplorerLink: `https://explorer.story.foundation/ipa/${response.ipId}`,
     };
 
     updateAssetInStorage(updatedAsset);
     setForm({ title: "", description: "" });
+    setIsLoading(false);
   };
 
   const mintStoryNFT = async (uri: string, asset: AssetData) => {
@@ -121,6 +131,8 @@ export default function MyAssets() {
       description: "This NFT represents ownership of an IP Asset",
       video: uri,
     };
+
+    setIsLoading(true);
 
     const nftIpfsHash = await uploadJSONToIPFS(nftMetadata);
     const nftHash = createHash("sha256")
@@ -143,6 +155,7 @@ export default function MyAssets() {
       tokenId,
     };
     updateAssetInStorage(updatedAsset);
+    setIsLoading(false);
   };
 
   return (
@@ -220,8 +233,14 @@ export default function MyAssets() {
                               />
                             </div>
                             <DialogFooter>
-                              <Button type="submit" className="w-full">
-                                Register IP
+                              <Button
+                                type="submit"
+                                className="w-full mt-4"
+                                disabled={isLoading}
+                              >
+                                {isLoading
+                                  ? "Registering IP..."
+                                  : "Register IP"}
                               </Button>
                             </DialogFooter>
                           </form>
@@ -249,9 +268,10 @@ export default function MyAssets() {
                     onClick={() => {
                       mintStoryNFT(asset.url, asset);
                     }}
+                    disabled={isLoading}
                     className="w-full"
                   >
-                    Mint Story NFT
+                    {isLoading ? "Minting NFT..." : "Mint Story NFT"}
                   </Button>
                 ) : (
                   <div className="w-full flex justify-center">
