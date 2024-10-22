@@ -11,6 +11,7 @@ import { get } from "https";
 import { Image } from "@livepeer/ai/models/components";
 // @ts-ignore
 import { PinataSDK } from "pinata-web3";
+import { fetchExternalImage } from "next/dist/server/image-optimizer";
 
 const livepeerAI = new Livepeer({
   httpBearer: process.env.LIVEPEER_API_KEY,
@@ -118,8 +119,10 @@ export async function imageToVideo(imageUrl: string) {
   // const publicDir = path.join(process.cwd(), "public");
   // const imagePath = path.join(publicDir, "test.png");
 
+  const image = await fetchExternalImage(imageUrl);
+
   const result = await livepeerAI.generate.imageToVideo({
-    image: await openAsBlob(imageUrl),
+    image: { fileName: "test.png", content: image.buffer },
     modelId: "stabilityai/stable-video-diffusion-img2vid-xt-1-1",
   });
 
