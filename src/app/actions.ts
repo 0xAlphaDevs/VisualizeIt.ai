@@ -113,13 +113,13 @@ export async function imageToImage(prompt: string, imageData: string) {
 
 // after image is selected by user, convert to video
 export async function imageToVideo(imageUrl: string) {
-  await downloadImage(imageUrl);
+  // await downloadImage(imageUrl);
 
-  const publicDir = path.join(process.cwd(), "public");
-  const imagePath = path.join(publicDir, "test.png");
+  // const publicDir = path.join(process.cwd(), "public");
+  // const imagePath = path.join(publicDir, "test.png");
 
   const result = await livepeerAI.generate.imageToVideo({
-    image: await openAsBlob(imagePath),
+    image: await openAsBlob(imageUrl),
     modelId: "stabilityai/stable-video-diffusion-img2vid-xt-1-1",
   });
 
