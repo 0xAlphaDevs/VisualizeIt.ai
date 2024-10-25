@@ -81,13 +81,15 @@ export default function VideoGenerator() {
     } else {
       setIsPending(true);
       console.log("Generating image from script:", script);
-      // livepeer to generate image from prompt
-      const response = await textToImage(script);
-      if (response.success) {
-        setImages((prevImages) => [...response.images, ...prevImages]);
-        setIsPending(false);
-      } else {
-        console.error("Failed to generate image from script:", response.error);
+      try {
+        // livepeer to generate image from prompt
+        const response = await textToImage(script);
+        if (response.success) {
+          setImages((prevImages) => [...response.images, ...prevImages]);
+          setIsPending(false);
+        }
+      } catch (error) {
+        console.error("Error generating image from script:", error);
         setIsPending(false);
       }
     }
@@ -283,12 +285,14 @@ export default function VideoGenerator() {
             <div className="mt-8 flex flex-col items-center w-full">
               <h2 className="mb-4 text-xl font-semibold">Generated Images</h2>
               {images.map((src, index) => (
-                <div className="flex flex-col justify-center items-center">
+                <div
+                  key={index}
+                  className="flex flex-col justify-center items-center"
+                >
                   <Image
-                    key={index}
                     src={src}
-                    width={1280}
-                    height={720}
+                    width={960}
+                    height={540}
                     alt={`Generated Image ${index + 1}`}
                     className="rounded-lg"
                   />
@@ -314,8 +318,8 @@ export default function VideoGenerator() {
                 <div className="flex flex-col justify-center items-center">
                   <video
                     key={index}
-                    width={512}
-                    height={512}
+                    width={1280}
+                    height={720}
                     controls
                     className="rounded-lg cursor-pointer"
                     onClick={(e) => handlePlayPause(e.currentTarget)}
