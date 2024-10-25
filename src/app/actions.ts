@@ -17,23 +17,23 @@ const livepeerAI = new Livepeer({
   httpBearer: process.env.LIVEPEER_API_KEY,
 });
 
-async function downloadImage(url: string) {
-  const filePath = resolve(process.cwd(), "public", "test.png");
-  const file = createWriteStream(filePath);
+// async function downloadImage(url: string) {
+//   const filePath = resolve(process.cwd(), "public", "test.png");
+//   const file = createWriteStream(filePath);
 
-  return new Promise((resolve, reject) => {
-    get(url, (response) => {
-      response.pipe(file);
-      file.on("finish", () => {
-        file.close(resolve); // Close the file stream when finished
-        console.log("Image downloaded and saved!");
-      });
-    }).on("error", (err) => {
-      console.error("Error downloading image:", err);
-      reject(err);
-    });
-  });
-}
+//   return new Promise((resolve, reject) => {
+//     get(url, (response) => {
+//       response.pipe(file);
+//       file.on("finish", () => {
+//         file.close(resolve); // Close the file stream when finished
+//         console.log("Image downloaded and saved!");
+//       });
+//     }).on("error", (err) => {
+//       console.error("Error downloading image:", err);
+//       reject(err);
+//     });
+//   });
+// }
 
 // convert script scene to AI image
 export async function textToImage(prompt: string) {
@@ -114,11 +114,6 @@ export async function imageToImage(prompt: string, imageData: string) {
 
 // after image is selected by user, convert to video
 export async function imageToVideo(imageUrl: string) {
-  // await downloadImage(imageUrl);
-
-  // const publicDir = path.join(process.cwd(), "public");
-  // const imagePath = path.join(publicDir, "test.png");
-
   const image = await fetchExternalImage(imageUrl);
 
   const result = await livepeerAI.generate.imageToVideo({
@@ -153,5 +148,17 @@ export async function uploadJSONToIPFS(json: any) {
   console.log("Uploading JSON to IPFS...", json);
   const upload = await pinata.upload.json(json);
   console.log("JSON uploaded to IPFS:", upload);
+  return upload.IpfsHash;
+}
+
+export async function uploadFileToIPFS(url: any) {
+  const pinata = new PinataSDK({
+    pinataJwt: `${process.env.PINATA_JWT}`,
+    pinataGateway: `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}`,
+  });
+
+  console.log("Uploading content of URL to Pinata...", url);
+  const upload = await pinata.upload.url(url);
+  console.log("URL contents uploaded to IPFS:", upload);
   return upload.IpfsHash;
 }

@@ -91,7 +91,7 @@ export default function MyAssets() {
     console.log("Ip metadata:", ipMetadata);
 
     // upload to ipfs
-    const ipIpfsHash = await uploadJSONToIPFS(ipMetadata);
+    const ipIpfsHash = await ipMetadata;
     const ipHash = createHash("sha256")
       .update(JSON.stringify(ipMetadata))
       .digest("hex");
@@ -183,7 +183,7 @@ export default function MyAssets() {
                   <>
                     {asset.registeredIp ? (
                       <Button className="w-full" variant="outline" asChild>
-                        <Link href={asset.storyExplorerLink}>
+                        <Link target="__blank" href={asset.storyExplorerLink}>
                           IP already minted
                           <ExternalLink className="w-4 h-4 ml-2" />
                         </Link>

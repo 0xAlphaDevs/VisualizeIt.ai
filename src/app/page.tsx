@@ -1,38 +1,42 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { motion } from "framer-motion"
-import { Wand2, VideoIcon, BrainCircuit } from "lucide-react"
-import { useState } from "react"
-``
+} from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { Wand2, VideoIcon, BrainCircuit } from "lucide-react";
+import { useState } from "react";
+``;
 export default function Home() {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   const features = [
     {
-      title: "AI-Powered Scene Generation",
-      description: "Transform your ideas into stunning visuals with our advanced AI technology.",
-      icon: <Wand2 className="h-8 w-8 text-blue-500" />,
-    },
-    {
-      title: "Narration to Visual Story",
-      description: "Convert your narrations into captivating visual stories automatically.",
+      title: "Sketch to Visual Story",
+      description:
+        "Convert your drawings and scribbles into captivating visuals.",
       icon: <VideoIcon className="h-8 w-8 text-green-500" />,
     },
     {
-      title: "Smart Content Creation",
-      description: "Leverage AI to create engaging content for your audience effortlessly.",
+      title: "Script to Visuals",
+      description:
+        "Transform your ideas into stunning visuals with Livepeer AI.",
+      icon: <Wand2 className="h-8 w-8 text-blue-500" />,
+    },
+
+    {
+      title: "Create and Monetize IP",
+      description:
+        "You can mint IP for your assets on Story network which can be licensed and monetized.",
       icon: <BrainCircuit className="h-8 w-8 text-purple-500" />,
     },
-  ]
+  ];
 
   return (
     <>
@@ -74,7 +78,8 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl">
-            A tool for empowering your creativity with AI-driven visual storytelling.
+            A tool for empowering your creativity with AI-driven visual
+            storytelling.
           </p>
         </motion.div>
 
@@ -132,11 +137,11 @@ export default function Home() {
               rel="noopener noreferrer"
               className="text-blue-500 hover:underline"
             >
-              alphadevs.dev
+              AlphaDevs
             </a>
           </p>
         </div>
       </footer>
     </>
-  )
+  );
 }

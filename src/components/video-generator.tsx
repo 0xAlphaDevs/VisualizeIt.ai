@@ -17,10 +17,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { FileText, Play, Eraser, Undo, Redo } from "lucide-react";
-import { imageToImage, textToImage, imageToVideo } from "@/app/actions";
+import {
+  imageToImage,
+  textToImage,
+  imageToVideo,
+  uploadFileToIPFS,
+} from "@/app/actions";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
+
+export const maxDuration = 60; // Applies to the actions
 
 export default function VideoGenerator() {
+  const { toast } = useToast();
   const [script, setScript] = useState("");
   const [prompt, setPrompt] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -87,29 +96,40 @@ export default function VideoGenerator() {
   const handleGenerateVideo = async (imageUrl: string) => {
     setIsGeneratingVideo(true);
     console.log("Generating video from image:", imageUrl);
-    const response = await imageToVideo(imageUrl);
-    if (response.success) {
-      setVideos((prevVideos) => [...response.images, ...prevVideos]);
-      setIsGeneratingVideo(false);
-    } else {
-      console.error("Failed to generate video:", response.error);
+    try {
+      const response = await imageToVideo(imageUrl);
+      if (response.success) {
+        setVideos((prevVideos) => [...response.images, ...prevVideos]);
+        setIsGeneratingVideo(false);
+      } else {
+        console.error("Failed to generate video:", response.error);
+        setIsGeneratingVideo(false);
+      }
+    } catch (error) {
+      console.error("Error generating video from image:", error);
       setIsGeneratingVideo(false);
     }
   };
 
-  const handleSaveVideo = (videoUrl: string) => {
-    console.log("Saving video to My Assets:", videoUrl);
+  const handleSaveVideo = async (videoUrl: string) => {
     setIsSavingVideo(true);
     const existingVideos = JSON.parse(localStorage.getItem("myAssets") || "[]");
     const videoExists = existingVideos.some(
-      (video: { url: string }) => video.url === videoUrl
+      (video: { livepeerUrl: string }) => video.livepeerUrl === videoUrl
     );
     if (videoExists) {
-      // Display an alert if the video is already saved
-      alert("This video has already been saved to My Assets.");
+      toast({
+        title: "Video Exists",
+        description: "This video has already been saved to My Assets.",
+        variant: "destructive",
+      });
+      console.log("Video already saved to My Assets.");
+      setIsSavingVideo(false);
     } else {
+      const fileIpfsHash = await uploadFileToIPFS(videoUrl);
       const videoData = {
-        url: videoUrl,
+        url: `https://copper-lazy-gamefowl-691.mypinata.cloud/ipfs/${fileIpfsHash}`,
+        livepeerUrl: videoUrl,
         nftMinted: false,
         nftIpfsHash: "",
         nftHash: "",
@@ -121,8 +141,11 @@ export default function VideoGenerator() {
       existingVideos.push(videoData);
       localStorage.setItem("myAssets", JSON.stringify(existingVideos));
 
-      // Display an alert to inform the user
-      alert("Video Saved to My Assets");
+      // Display a toast to inform the user
+      toast({
+        title: "Video Saved",
+        description: "Video saved to My Assets!",
+      });
       setIsSavingVideo(false);
     }
   };
@@ -303,9 +326,12 @@ export default function VideoGenerator() {
                   <Button
                     variant="outline"
                     className="my-2 "
+                    disabled={isSavingVideo}
                     onClick={() => handleSaveVideo(src)}
                   >
-                    Save Video to My Assets
+                    {isSavingVideo
+                      ? "Saving Video..."
+                      : "Save Video to My Assets"}
                   </Button>
                 </div>
               ))}
