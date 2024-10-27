@@ -14,6 +14,7 @@ import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import { createWalletClient, type Chain } from "viem";
 import { PropsWithChildren } from "react";
 import AppProvider from "@/lib/context/AppContext";
+import { zoraSepolia } from "viem/chains";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -36,11 +37,11 @@ export const iliad = {
   testnet: true,
 } as const satisfies Chain;
 
-const config = createConfig(
+export const config = createConfig(
   getDefaultConfig({
     walletConnectProjectId:
       process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
-    chains: [iliad],
+    chains: [iliad, zoraSepolia],
     appName: "VisualizeIt.ai",
   })
 );

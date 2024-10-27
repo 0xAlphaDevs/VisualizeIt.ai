@@ -99,13 +99,24 @@ export default function VideoGenerator() {
     setIsGeneratingVideo(true);
     console.log("Generating video from image:", imageUrl);
     try {
-      const response = await imageToVideo(imageUrl);
-      if (response.success) {
-        setVideos((prevVideos) => [...response.images, ...prevVideos]);
+      // const response = await imageToVideo(imageUrl);
+      const response = await fetch(
+        `https://livepeer-proxy.onrender.com/image-to-video?imageUrl=${imageUrl}`
+      ).then((res) => res.json());
+
+      console.log("response", response);
+
+      if (response.data.success) {
+        setVideos((prevVideos) => [...response.data.images, ...prevVideos]);
         setIsGeneratingVideo(false);
       } else {
-        console.error("Failed to generate video:", response.error);
+        console.error("Failed to generate video:", response.data.error);
         setIsGeneratingVideo(false);
+        toast({
+          title: "Error",
+          description: "Failed to generate video from image.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Error generating video from image:", error);
@@ -131,6 +142,7 @@ export default function VideoGenerator() {
       const fileIpfsHash = await uploadFileToIPFS(videoUrl);
       const videoData = {
         url: `https://copper-lazy-gamefowl-691.mypinata.cloud/ipfs/${fileIpfsHash}`,
+        uri: fileIpfsHash,
         livepeerUrl: videoUrl,
         nftMinted: false,
         nftIpfsHash: "",
@@ -284,15 +296,22 @@ export default function VideoGenerator() {
           {images.length > 0 && (
             <div className="mt-8 flex flex-col items-center w-full">
               <h2 className="mb-4 text-xl font-semibold">Generated Images</h2>
+              <div className="flex w-full justify-end">
+                <Button
+                  variant="outline"
+                  className="my-4 "
+                  onClick={() => setImages([])}
+                >
+                  Clear Images
+                </Button>
+              </div>
               {images.map((src, index) => (
                 <div
                   key={index}
                   className="flex flex-col justify-center items-center"
                 >
-                  <Image
+                  <img
                     src={src}
-                    width={960}
-                    height={540}
                     alt={`Generated Image ${index + 1}`}
                     className="rounded-lg"
                   />
@@ -308,6 +327,7 @@ export default function VideoGenerator() {
                   </Button>
                 </div>
               ))}
+              {/* Add a button to clear all images */}
             </div>
           )}
 
