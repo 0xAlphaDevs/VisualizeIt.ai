@@ -39,6 +39,8 @@ interface AssetData {
   ipIpfsHash: string;
   registeredIp: boolean;
   tokenId: string;
+  collectionMintedOnZora: boolean;
+  zoraMintPageLink: string;
   storyExplorerLink: string;
 }
 

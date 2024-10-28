@@ -37,6 +37,8 @@ interface AssetData {
   ipIpfsHash: string;
   registeredIp: boolean;
   tokenId: string;
+  collectionMintedOnZora: boolean;
+  zoraMintPageLink: string;
   storyExplorerLink: string;
 }
 
@@ -51,6 +53,7 @@ const Asset = ({
   const { isConnected, address, chain } = useAccount();
   const { mintNFT, client } = useStory();
   const [form, setForm] = useState({ title: "", description: "" });
+  const [collectionName, setCollectionName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCreatingCollectionOnZora, setIsCreatingCollectionOnZora] =
     useState(false);
@@ -248,17 +251,29 @@ const Asset = ({
       console.log("Parameters", parameters);
 
       writeContract(parameters, {
-        onSettled: () => {
+        onSettled: (txHash) => {
+          if (!txHash) {
+            console.error("Transaction not settled");
+            return;
+          }
           console.log("Transaction settled");
           toast({
             title: "Collection created on Zora",
             description: "Collection created on Zora",
           });
+
           setIsCreatingCollectionOnZora(false);
           console.log("Collection created on Zora", contractAddress);
         },
         onSuccess: (txHash) => {
           console.log("Transaction hash", txHash);
+          const updatedAsset = {
+            ...asset,
+            collectionMintedOnZora: true,
+            zoraMintPageLink: ` https://testnet.zora.co/collect/zsep:${contractAddress}/1`,
+          };
+
+          updateAssetInStorage(updatedAsset);
         },
         onError: (error) => {
           console.error("Error creating collection on Zora", error);
@@ -303,15 +318,74 @@ const Asset = ({
                       <ExternalLink className="w-4 h-4 ml-2" />
                     </Link>
                   </Button>
-                  <Button
-                    onClick={() =>
-                      handleCreateCollectionOnZora("My Collection", asset)
-                    }
-                    disabled={isCreatingCollectionOnZora}
-                    className="w-full"
-                  >
-                    Create collection on Zora
-                  </Button>
+                  {asset.collectionMintedOnZora ? (
+                    <Button className="w-full" variant="outline" asChild>
+                      <Link target="__blank" href={asset.zoraMintPageLink}>
+                        Go to Zora Mint Page
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  ) : (
+                    <>
+                      {isConnected ? (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className="w-full" variant="outline">
+                              Create collection on Zora
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="w-full max-w-md">
+                            <DialogHeader>
+                              <DialogTitle>
+                                {" "}
+                                Create collection on Zora
+                              </DialogTitle>
+                            </DialogHeader>
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                handleCreateCollectionOnZora(
+                                  collectionName,
+                                  asset
+                                );
+                              }}
+                            >
+                              <div className="flex flex-col gap-4">
+                                <Label htmlFor="collectionName">
+                                  Collection Name
+                                </Label>
+                                <Input
+                                  id="collectionName"
+                                  name="collectionName"
+                                  placeholder="Enter collection name"
+                                  value={collectionName}
+                                  onChange={(e) =>
+                                    setCollectionName(e.target.value)
+                                  }
+                                  required
+                                />
+                              </div>
+                              <DialogFooter>
+                                <Button
+                                  type="submit"
+                                  disabled={isCreatingCollectionOnZora}
+                                  className="w-full mt-4"
+                                >
+                                  {isCreatingCollectionOnZora
+                                    ? "Creating collection..."
+                                    : "Create collection"}
+                                </Button>
+                              </DialogFooter>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                      ) : (
+                        <div className="w-full flex justify-center">
+                          <ConnectKitButton />
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               ) : (
                 <Dialog>
