@@ -13,13 +13,12 @@ A tool for empowering your creativity with AI-driven visual storytelling.
 1. [All Links](#links)
 2. [Technologies](#technologies)
 3. [App Demo](#app-demo-screenshots)
-4. [Future Vision](#future-vision)
-5. [Instructions to setup and run locally ](#instructions-to-setup)
-6. [Team](#team)
+4. [Instructions to setup and run locally ](#instructions-to-setup)
+5. [Team](#team)
 
 ## Links
 
-- [Deployed URL]()
+- [Deployed URL](https://visualizeit-nine.vercel.app/)
 - [Presentation](https://www.canva.com/design/DAGUBJ5DZrg/piPVMc0ygpRdEiexqDWqLw/view)
 
 ## Technologies
@@ -31,32 +30,28 @@ A tool for empowering your creativity with AI-driven visual storytelling.
 ## App Demo Screenshots
 
 **_Landing Page_**
-![image](/public/appDemo/landing-page.png)
+![image](/public/landing-page.png)
 
 **_Dashboard_**
-![image](/public/appDemo/dashboard.png)
+![image](/public/dashboard.png)
 
-**_Video Generation_**
-![image](/public/appDemo/scene-generation.png)
+**_Scene Generation_**
+![image](/public/scene-generation.png)
 
 **_My Assets_**
-![image](/public/appDemo/my-assets.png)
+![image](/public/my-assets.png)
 
 **_Register IP_**
-![image](/public/appDemo/minting.png)
+![image](/public/register-ip.png)
 
 **_Create Collection on Zora_**
-![image](/public/appDemo/minting.png)
+![image](/public/create-collection-on-zora.png)
 
 **_IP Asset on Story Explorer_**
-![image](/public/appDemo/minting.png)
+![image](/public/ip-asset-on-story-explorer.png)
 
 **_Mint Page on Zora_**
-![image](/public/appDemo/minting.png)
-
-## Future Vision
-
--
+![image](/public/mint-page-on-zora.png)
 
 ## Instructions to Setup
 
