@@ -4,9 +4,9 @@ A tool for empowering your creativity with AI-driven visual storytelling.
 
 ### Features
 
-- AI-Powered Scene Generation : Transform your ideas into stunning visuals with our advanced AI technology.
-- Narration to Visual Story : Convert your narrations into captivating visual stories automatically.
--
+- AI-Powered Scene Generation : Convert your drawings and scene descriptions into visuals for your stories with Livepeer AI.
+- IP Registeration : Register IP for your assets on Story network which can be licensed and monetized.
+- Post on Zora : Create collection on Zora and monetize your assets by sharing them with world.
 
 ## Table of Contents
 
@@ -24,9 +24,9 @@ A tool for empowering your creativity with AI-driven visual storytelling.
 
 ## Technologies
 
-- Livepeer
+- Livepeer AI
+- Story Protocol (Iliad Testnet)
 - Zora
-- Story Protocol
 
 ## App Demo Screenshots
 
@@ -36,17 +36,22 @@ A tool for empowering your creativity with AI-driven visual storytelling.
 **_Dashboard_**
 ![image](/public/appDemo/dashboard.png)
 
-**_Scene Generation_**
+**_Video Generation_**
 ![image](/public/appDemo/scene-generation.png)
 
-**_Story Generation_**
-![image](/public/appDemo/story-generation.png)
-![image](/public/appDemo/story-generation-2.png)
-
-**_My_Assets_**
+**_My Assets_**
 ![image](/public/appDemo/my-assets.png)
 
-**_Minting_**
+**_Register IP_**
+![image](/public/appDemo/minting.png)
+
+**_Create Collection on Zora_**
+![image](/public/appDemo/minting.png)
+
+**_IP Asset on Story Explorer_**
+![image](/public/appDemo/minting.png)
+
+**_Mint Page on Zora_**
 ![image](/public/appDemo/minting.png)
 
 ## Future Vision

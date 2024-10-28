@@ -1,13 +1,13 @@
-
-import Link from 'next/link'
-import { ArrowRight, Pencil, Film, DollarSign } from 'lucide-react'
+import Link from "next/link";
+import { ArrowRight, Pencil, Film, DollarSign } from "lucide-react";
 
 export default function Dashboard() {
   return (
     <div className="max-w-5xl mx-auto py-8">
       <h1 className="text-4xl font-bold mb-6">Welcome to VisualizeIt.ai</h1>
       <p className="text-xl mb-8">
-        Create stunning visuals for your videos using AI-powered scene generation.
+        Create stunning visuals for your videos using AI-powered scene
+        generation.
       </p>
 
       <div className="grid md:grid-cols-3 gap-8">
@@ -32,7 +32,8 @@ export default function Dashboard() {
             <Film className="mr-2" /> Step 2: Generate
           </h2>
           <p className="mb-4">
-            Our AI will transform your scribble into a detailed scene based on your prompt.
+            Our AI will transform your scribble into a detailed scene based on
+            your prompt.
           </p>
           <Link
             href="/generate"
@@ -47,7 +48,8 @@ export default function Dashboard() {
             <DollarSign className="mr-2" /> Step 3: Monetize
           </h2>
           <p className="mb-4">
-            Earn creator revenue through Zora and Mint IP for your asset using Story
+            Earn creator revenue through Zora and Mint IP for your asset on
+            Story Network.
           </p>
           <Link
             href="/generate"
@@ -56,10 +58,7 @@ export default function Dashboard() {
             Start Generating <ArrowRight className="ml-2" />
           </Link>
         </div>
-
       </div>
-
-
 
       <div className="mt-12 text-center">
         <Link
@@ -70,5 +69,5 @@ export default function Dashboard() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

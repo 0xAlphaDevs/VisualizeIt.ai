@@ -18,22 +18,22 @@ export default function Home() {
 
   const features = [
     {
-      title: "Sketch to Visual Story",
+      title: "Create Visuals for Videos",
       description:
-        "Convert your drawings and scribbles into captivating visuals.",
+        "Convert your drawings and scene descriptions into visuals for your stories with Livepeer AI.",
       icon: <VideoIcon className="h-8 w-8 text-green-500" />,
     },
     {
-      title: "Script to Visuals",
+      title: "Register IP for your Assets",
       description:
-        "Transform your ideas into stunning visuals with Livepeer AI.",
+        "Register IP for your assets on Story network which can be licensed and monetized.",
       icon: <Wand2 className="h-8 w-8 text-blue-500" />,
     },
 
     {
-      title: "Create and Monetize IP",
+      title: "Create collections on Zora",
       description:
-        "You can mint IP for your assets on Story network which can be licensed and monetized.",
+        "Create collection on Zora and monetize your assets by sharing them with world.",
       icon: <BrainCircuit className="h-8 w-8 text-purple-500" />,
     },
   ];
