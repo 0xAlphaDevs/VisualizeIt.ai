@@ -20,6 +20,7 @@ A tool for empowering your creativity with AI-driven visual storytelling.
 
 - [Deployed URL](https://visualizeit-nine.vercel.app/)
 - [Presentation](https://www.canva.com/design/DAGUBJ5DZrg/piPVMc0ygpRdEiexqDWqLw/view)
+- [Demo Video](https://youtu.be/IQbpuCov8CQ)
 
 ## Technologies
 
